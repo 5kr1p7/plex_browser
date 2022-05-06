@@ -8,15 +8,13 @@ import logging
 from pprint import pprint
 
 # --------------------------------
-
-"""
-Shodan.io: https://www.shodan.io/search?query=%22CherryPy%2F5.1.0%22+%22%2Fhome%22
-"""
+#logging.basicConfig(level = logging.DEBUG)
+#logging.StreamHandler(sys.stdout)
+# --------------------------------
 
 if len(sys.argv) < 2:
   print('Usage: ' + sys.argv[0] + ' <IP>')
   sys.exit(2)
-  
 else:
   if len(sys.argv) == 3:
     section = sys.argv[2]
@@ -24,8 +22,6 @@ else:
 url = sys.argv[1]
 types = ['movie', 'show']
 
-#logging.basicConfig(level = logging.DEBUG)
-#logging.StreamHandler(sys.stdout)
 
 class Plex():
   '''
@@ -40,6 +36,7 @@ class Plex():
     self.url = f"{host}:{port}"
     self.token = self.getToken()
     self.sections = self.getSections()
+
     
   def getToken(self) -> str:
     '''Get token from settings page.'''
@@ -49,9 +46,11 @@ class Plex():
     
     return token_tag['value']
 
+
   def genUrl(self, path: str) -> str:
     '''Generate URL with token.'''
     return f"http://{self.url}{path}?X-Plex-Token={self.token}"
+
 
   def getVideoLink(self, data) -> str:
     '''Generate link to video file.'''
@@ -59,6 +58,7 @@ class Plex():
       if not type(data['Part']) is list:
         return self.genUrl(data['Part']['@key'])
     return ''
+
   
   def getSections(self) -> dict:
     '''Get sections (libraries) from device.'''
@@ -78,6 +78,7 @@ class Plex():
                 'title': directory['@title']
             }
     return sections_list
+
   
   def getVideosFromSection(self, section_id: int) -> dict:
     '''Get videos list from section(library).'''
@@ -96,6 +97,7 @@ class Plex():
       videos_list.append({ '_title': title, 'link': self.getVideoLink(video['Media']) })
     
     return videos_list
+
 
 plexDevice = Plex(url)
 
